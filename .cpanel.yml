@@ -1,0 +1,16 @@
+---
+deployment:
+  tasks:
+    - export COMPOSER_HOME=/home/associat/.composer && /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
+    - |
+      if [ ! -f .env ]; then
+        cp .env.example .env
+        sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+        sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
+        sed -i 's|APP_URL=http://localhost|APP_URL=https://9associates.com|' .env
+        /usr/local/bin/php artisan key:generate --force
+      fi
+    - /usr/local/bin/php artisan config:cache
+    - /usr/local/bin/php artisan route:cache
+    - /usr/local/bin/php artisan view:cache
+    - /usr/local/bin/php artisan storage:link
